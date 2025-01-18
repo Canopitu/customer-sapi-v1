@@ -1,0 +1,11 @@
+%dw 2.0
+
+type auto_bbcc6870_4271_44cc_be42_6f90cb899db6_Output_Payload = {
+  registrationResponse: {
+    eventInstanceId: String, 
+    status: "success" | "failure", 
+    _?: Any
+  }, 
+  _?: Any
+}
+

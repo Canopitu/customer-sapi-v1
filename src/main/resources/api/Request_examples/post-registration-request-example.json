@@ -1,0 +1,14 @@
+{
+  "registrationRequest": {
+    "contactType": "mobile",
+    "countryCode": "+91",
+    "mobile": "7647678765",
+    "password": "sdkhjfd",
+    "acceptDataPolicy": "true",
+    "recieveNews": "true",
+    "acceptPIC": "true",
+    "language": "en",
+    "captchaToken": "agjsfjlagslfjasg",
+    "recieveClaimSettle": "true"
+  }
+}
