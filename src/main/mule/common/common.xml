@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="error-response-subflow" doc:id="58b6a9a4-5ab9-41bf-b703-622c580391ce" >
+		<ee:transform doc:name="Transform Message" doc:id="891074f6-bc42-4ca1-b1a3-6ebd785da744">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "msg": "failed operation",
+  "code": vars.code,
+  "success": false,
+  "eventId": "dbfhjsdbhfbdo8ryt876t75ty",
+  "error": {
+    "type": vars.errorType,
+    "title": vars.title,
+    "details": vars.details
+  }
+}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables>
+				</ee:variables>
+			</ee:transform>
+	</sub-flow>
+	<sub-flow name="sub-flow-for-initializing-variables" doc:id="e4a2b5f3-5de7-4fa3-99fe-6fab3de92641" >
+		<ee:transform doc:name="Transform Message initialize variables" doc:id="f36cafa1-698c-4b10-b683-21c807641530">
+			<ee:message>
+				<ee:set-payload><![CDATA[payload default ""]]></ee:set-payload>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="headers"><![CDATA[attributes.headers default ""]]></ee:set-variable>
+				<ee:set-variable variableName="uriParams"><![CDATA[attributes.uriParams default ""]]></ee:set-variable>
+				<ee:set-variable variableName="queryParams"><![CDATA[attributes.queryParams default ""]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</sub-flow>
+	<sub-flow name="initialize-request-data-subFlow" doc:id="3a730d40-8fd1-4a5b-9056-cfb8cc956e39" >
+		<ee:transform doc:name="Transform Message initialize variables" doc:id="13e5c349-5169-4e8c-be3e-f739a7b0ad1a">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="wf" ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</sub-flow>
+</mule>

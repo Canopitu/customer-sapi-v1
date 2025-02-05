@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	
+	<flow name="post-customer-state-implementation-Flow" doc:id="bbcc6870-4271-44cc-be42-6f90cb899db6" >
+		<ee:transform doc:name="Transform Message to create SFDC request payload fir registration" doc:id="42de623f-556f-48b8-b48a-542869311985" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+ [{
+    "contactType__c": payload.customerStateRequest.contactType,
+    "countryCode__c": payload.customerStateRequest.countryCode,
+    "mobile__c": payload.customerStateRequest.mobile,
+    "email_c": payload.customerStateRequest.email,
+    "password__c": payload.customerStateRequest.password,
+    "status__c": payload.customerStateRequest.status
+ }]
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="request logger for SFDC call" doc:id="6061aeec-bf59-4fa8-bf6b-e207c40c8962" message="#[%dw 2.0&#10;output application/json indent = false  &#10;---  &#10;{  	&#10;    TimeStamp: now(), 	&#10;    transactionId: vars.headers.'x-cms-transactionId', 	&#10;    AppName: app.name, 	&#10;    FlowName: flow.name, 	&#10;    BusinessProcessName:  &quot;Customer state&quot;, 	&#10;    Category:  &quot;Customer&quot;, 	&#10;    OriginatingApplication:  &quot;Process API&quot;, 	&#10;    DesinationApplication:  &quot;Salesforce&quot;, 	&#10;    CustomerId: &quot;NA&quot;, 	&#10;    txnState:  &quot;SFDC Response&quot; &#10;}]"/>
+		<salesforce:create doc:name="Create" doc:id="8490e30a-5bd1-48d2-8a36-9a9b7a0fde6f" config-ref="Salesforce_Config" type="customerState__c"/>
+		<logger level="INFO" doc:name="responselogger for SFDC call" doc:id="d84daf98-ef0f-4a2e-a339-7a16bbfe4cb1" message="#[%dw 2.0&#10;output application/json indent = false  &#10;---  &#10;{  	&#10;    TimeStamp: now(), 	&#10;    transactionId: vars.headers.'x-cms-transactionId', 	&#10;    AppName: app.name, 	&#10;    FlowName: flow.name, 	&#10;    BusinessProcessName:  &quot;Customer state&quot;, 	&#10;    Category:  &quot;Customer&quot;, 	&#10;    OriginatingApplication:  &quot;Process API&quot;, 	&#10;    DesinationApplication:  &quot;Salesforce&quot;, 	&#10;    CustomerId: &quot;NA&quot;, 	&#10;    txnState:  &quot;ERROR&quot; &#10;}]"/>
+		<ee:transform doc:name="Transform Message to create registration SAPIresponse" doc:id="941d9b02-3270-43ac-95af-156d49675a27">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  registrationResponse: {
+    eventInstanceId: "dsfhd bfhsbdfhjsb3784t2wfsd",
+    status: "success"
+  }
+} as Object {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<error-handler ref="app-global-errorError_Handler"/>
+	</flow>
+
+	
+	</mule>

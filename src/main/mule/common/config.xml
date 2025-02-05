@@ -18,5 +18,6 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
    <salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="22bb64ce-6020-40dc-a806-fb00a5fcbfd6" >
 		<salesforce:basic-connection username="${sfdc.username}" password="${sfdc.password}" securityToken="${sfdc.securityToken}" />
 	</salesforce:sfdc-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="87c3541f-7a3c-45a8-b4a0-a029ff9866d2" file="properties\constraints\error-type.yaml" />
 	
 </mule>

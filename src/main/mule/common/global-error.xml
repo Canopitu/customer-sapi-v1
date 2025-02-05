@@ -4,60 +4,69 @@
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-	<error-handler name="global-errorError_Handler" doc:id="c266a528-bd93-49b7-9719-489595b5b836" >
+	<error-handler name="app-global-errorError_Handler" doc:id="e8a57a61-aaea-4965-b433-6cd44d907d0e" >
+		<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="cfd2be16-89dd-4e82-bb37-d38106da395c" type="SALESFORCE:INVALID_INPUT">
+			<ee:transform doc:name="Transform Message" doc:id="d4b7746d-ac95-4d33-a208-30180fae6865" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="code" ><![CDATA[500]]></ee:set-variable>
+					<ee:set-variable variableName="title" ><![CDATA[error.description]]></ee:set-variable>
+					<ee:set-variable variableName="details" ><![CDATA[error.detailedDescription]]></ee:set-variable>
+					<ee:set-variable variableName="errorType" ><![CDATA[error.errorType.identifier]]></ee:set-variable>
+					<ee:set-variable variableName="httpStatus" ><![CDATA[500]]></ee:set-variable>
+					<ee:set-variable variableName="httpReason" ><![CDATA["salesforce error"]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<flow-ref doc:name="Flow Reference" doc:id="5082abb9-908f-42f0-ac0f-ffea8be96f19" name="error-response-subflow" />
+			<logger level="INFO" doc:name="Logger for bad-request error" doc:id="2dd2a473-a8db-4b85-ba72-13328017b4c8" message="#[{  	&#10;    TimeStamp: now(), 	&#10;    transactionId: vars.headers.'x-cms-transactionId', 	&#10;    AppName: app.name, 	&#10;    FlowName: flow.name, 	&#10;    BusinessProcessName:  &quot;Customer Registration&quot;, 	&#10;    Category:  &quot;Customer&quot;, 	&#10;    OriginatingApplication:  &quot;Process API&quot;, &#10;    CustomerId: &quot;NA&quot;, 	&#10;    txnState:  &quot;ERROR&quot; &#10;}]" />
+	</on-error-continue>
+	</error-handler>
+	<error-handler name="apikit-global-errorError_Handler" doc:id="c266a528-bd93-49b7-9719-489595b5b836" >
 		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="0347aace-a0c0-45f9-a13a-e239de988550" type="APIKIT:BAD_REQUEST" >
-			<ee:transform doc:name="Transform Message" doc:id="891074f6-bc42-4ca1-b1a3-6ebd785da744" >
+			<ee:transform doc:name="Transform Message" doc:id="7c63eca9-aca8-43ff-a072-8746f89e8995" >
 				<ee:message >
 					<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
+output application/java
 ---
-{message: "Bad request"}]]></ee:set-payload>
+{
+}]]></ee:set-payload>
 				</ee:message>
 				<ee:variables >
-					<ee:set-variable variableName="httpStatus" ><![CDATA[400]]></ee:set-variable>
+					<ee:set-variable variableName="code" ><![CDATA[p('error.bad_request.code')]]></ee:set-variable>
+					<ee:set-variable variableName="title" ><![CDATA[p('error.bad_request.title')]]></ee:set-variable>
+					<ee:set-variable variableName="details" ><![CDATA[p('error.bad_request.details')]]></ee:set-variable>
+					<ee:set-variable variableName="errorType" ><![CDATA[p('error.bad_request.errorType')]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
+			<flow-ref doc:name="Flow Reference" doc:id="84ef6d0a-171b-460e-92ec-c08dc60643ed" name="error-response-subflow" />
+			<logger level="INFO" doc:name="Logger for bad-request error" doc:id="4c0237fa-cbdc-46bd-b22a-8e268bb65a68" message="#[{  	&#10;    TimeStamp: now(), 	&#10;    transactionId: vars.headers.'x-cms-transactionId', 	&#10;    AppName: app.name, 	&#10;    FlowName: flow.name, 	&#10;    BusinessProcessName:  &quot;Customer Registration&quot;, 	&#10;    Category:  &quot;Customer&quot;, 	&#10;    OriginatingApplication:  &quot;Process API&quot;, &#10;    CustomerId: &quot;NA&quot;, 	&#10;    txnState:  &quot;ERROR&quot; &#10;}]"/>
 		</on-error-propagate>
-		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate1" doc:id="43e3b5d3-d3dc-4c3a-a3e0-f4e919eb7747" type="APIKIT:NOT_FOUND" >
-			<ee:transform doc:name="Transform Message" doc:id="75959170-b142-42cd-b171-5fb1863911d8" >
-				<ee:message >
-					<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate2" doc:id="a76d718a-05d5-4b47-8479-380d4cb8ded4" type="APIKIT:NOT_FOUND" >
+			<ee:transform doc:name="Transform Message" doc:id="af9264ac-4716-4d77-a101-03ed24a49ccf">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/java
 ---
-{message: "Resource not found"}]]></ee:set-payload>
+{
+}]]></ee:set-payload>
 				</ee:message>
-				<ee:variables >
-					<ee:set-variable variableName="httpStatus" ><![CDATA[404]]></ee:set-variable>
+				<ee:variables>
+					<ee:set-variable variableName="code"><![CDATA[p('error.resource_not_found.code')]]></ee:set-variable>
+					<ee:set-variable variableName="title"><![CDATA[p('error.resource_not_found.title')]]></ee:set-variable>
+					<ee:set-variable variableName="details"><![CDATA[p('error.resource_not_found.details')]]></ee:set-variable>
+					<ee:set-variable variableName="errorType"><![CDATA[p('error.resource_not_found.errorType')]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
+			<flow-ref doc:name="Flow Reference" doc:id="5116f556-78fa-4c6f-a6b7-14cedd13f2f1" name="error-response-subflow" />
+			<logger level="INFO" doc:name="Logger for not-found" doc:id="debe3d46-5b53-4040-80f7-96128f8fe1f2" message="#[{  	&#10;    TimeStamp: now(), 	&#10;    transactionId: attributes.headers.'x-cms-transactionId', 	&#10;    AppName: app.name, 	&#10;    FlowName: flow.name, 	&#10;    BusinessProcessName:  &quot;Customer Registration&quot;, 	&#10;    Category:  &quot;Customer&quot;, 	&#10;    OriginatingApplication:  &quot;Process API&quot;, &#10;    CustomerId: &quot;NA&quot;, 	&#10;    txnState:  &quot;ERROR&quot; &#10;}]" />
 		</on-error-propagate>
-		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate2" doc:id="a76d718a-05d5-4b47-8479-380d4cb8ded4" type="APIKIT:METHOD_NOT_ALLOWED" >
-			<ee:transform doc:name="Transform Message" doc:id="8df63e00-ec43-4b7b-b135-912afa333dea" >
-				<ee:message >
-					<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{message: "Method not allowed"}]]></ee:set-payload>
-				</ee:message>
-				<ee:variables >
-					<ee:set-variable variableName="httpStatus" ><![CDATA[405]]></ee:set-variable>
-				</ee:variables>
-			</ee:transform>
-		</on-error-propagate>
-		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate3" doc:id="b9867d9c-a16e-414b-b70b-4f1173011c4c" type="APIKIT:NOT_ACCEPTABLE" >
-			<ee:transform doc:name="Transform Message" doc:id="dbdc4da6-8da3-4f04-a94a-7b61f93ea500" >
-				<ee:message >
-					<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{message: "Not acceptable"}]]></ee:set-payload>
-				</ee:message>
-				<ee:variables >
-					<ee:set-variable variableName="httpStatus" ><![CDATA[406]]></ee:set-variable>
-				</ee:variables>
-			</ee:transform>
-		</on-error-propagate>
-		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate4" doc:id="3cb1e1e6-e9b8-4242-b78b-d3f15a32730f" type="APIKIT:UNSUPPORTED_MEDIA_TYPE" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate4" doc:id="3cb1e1e6-e9b8-4242-b78b-d3f15a32730f" type="EXPRESSION, STREAM_MAXIMUM_SIZE_EXCEEDED" >
 			<ee:transform doc:name="Transform Message" doc:id="2d19e46e-6380-4989-94c1-07c14b04597d" >
 				<ee:message >
 					<ee:set-payload ><![CDATA[%dw 2.0
@@ -66,9 +75,11 @@ output application/json
 {message: "Unsupported media type"}]]></ee:set-payload>
 				</ee:message>
 				<ee:variables >
-					<ee:set-variable variableName="httpStatus" ><![CDATA[415]]></ee:set-variable>
+					<ee:set-variable variableName="httpStatus" ><![CDATA[500]]></ee:set-variable>
+					<ee:set-variable variableName="httpReason" ><![CDATA["Internal server error"]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
+			<logger level="INFO" doc:name="Logger for not-found" doc:id="4ec30986-d4ac-41d9-bc1b-32d1a625f763" message="#[{  	&#10;    TimeStamp: now(), 	&#10;    transactionId: attributes.headers.'x-cms-transactionId', 	&#10;    AppName: app.name, 	&#10;    FlowName: flow.name, 	&#10;    BusinessProcessName:  &quot;Customer Registration&quot;, 	&#10;    Category:  &quot;Customer&quot;, 	&#10;    OriginatingApplication:  &quot;Process API&quot;, &#10;    CustomerId: &quot;NA&quot;, 	&#10;    txnState:  &quot;ERROR&quot; &#10;}]" />
 		</on-error-propagate>
 		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate5" doc:id="64686e31-fa53-4db9-a780-ac05779b5102" type="APIKIT:NOT_IMPLEMENTED" >
 			<ee:transform doc:name="Transform Message" doc:id="8ae94afb-cb12-473a-8fda-db6015d64b4f" >
@@ -82,6 +93,7 @@ output application/json
 					<ee:set-variable variableName="httpStatus" ><![CDATA[501]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
+			<logger level="INFO" doc:name="Logger for not-found" doc:id="102f9b5a-fc96-49d2-b495-d895cc05f315" message="#[{  	&#10;    TimeStamp: now(), 	&#10;    transactionId: attributes.headers.'x-cms-transactionId', 	&#10;    AppName: app.name, 	&#10;    FlowName: flow.name, 	&#10;    BusinessProcessName:  &quot;Customer Registration&quot;, 	&#10;    Category:  &quot;Customer&quot;, 	&#10;    OriginatingApplication:  &quot;Process API&quot;, &#10;    CustomerId: &quot;NA&quot;, 	&#10;    txnState:  &quot;ERROR&quot; &#10;}]" />
 		</on-error-propagate>
 	</error-handler>
 </mule>
